@@ -1,0 +1,38 @@
+<?php
+
+namespace App\Http\Controllers;
+use App\FrameSize;
+use App\User;
+use Image;
+use DB;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use App\crop_images;
+
+
+class ImageController extends Controller
+{
+ 
+
+   Public function croper(){
+    return view('pages.crop');
+  }
+  
+  public function upload(Request $request){
+     $data = $request->all();
+     echo print_r($data); die;
+     if(!file_exists(public_path('storage/crop'))) {
+      mkdir(public_path('storage/crop'), 0755);
+  }
+     if($request->hasFile('resized')){
+        $image = $request->file('resized');
+        $image_name= time().'.'. $image->getClientOriginalExtension();
+        $img = Image::make($image->getRealPath());
+        $path = $request->file('resized')->storeAs('public/crop', $img , $image);
+
+      }
+     return redirect()->action('ImageController@frames');
+  }
+  
+ 
+}

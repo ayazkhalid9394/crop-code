@@ -1,0 +1,64 @@
+this code is for upload an image and store in a file storage
+when user upload an image then an image is going to file storage..... 
+$('#upload_form').on('submit', function(event){
+    $event.preventDefault();
+    $.ajax({
+        url: "{{route('imageStore')}}",
+        method:"post",
+        data:new FormData(this),
+        dataType:'JSON',
+        contentType:false,
+        cache:false,
+        processData:false,
+        success: function(data){
+           $('#uploaded_image').html(data.uploaded_image);
+        }
+ 
+    });
+ });
+
+this is for cropping firstly we crop an image and after it we were sent an
+image through form and use a jquery and ajax for sent an image through form... 
+$(document).ready(function(){
+    $("#image").rcrop({
+       full:true,
+       grid:true,
+       minSize:[480,672],
+       maxSize:[768,1152],
+       preserveAspectRatio:true,
+       export:true,
+       
+    });
+    $("#image").on('rcrop-changed',function(){
+       var srcResized = $(this).rcrop('getDataUrl',480,480);
+      $("#crop").click(function(){
+         $('#resized').append('<img src="'+srcResized+'">');
+     })
+       
+   });
+   $('#resized').rcrop({
+      onSelectEnd: function (img, selection) {
+          $('input[name="x"]').val(selection.x);
+          $('input[name="y"]').val(selection.y);
+          $('input[name="width"]').val(selection.width);
+          $('input[name="height"]').val(selection.height);            
+      }
+  });         
+   
+});
+$('#form').on('submit', function(event){
+   $event.preventDefault();
+   $.ajax({
+       url: "{{route('upload')}}",
+       method:"post",
+       data:new FormData(this),
+       dataType:'JSON',
+       contentType:false,
+       cache:false,
+       processData:false,
+       success: function(data){
+          $('#resized').html(data.resized);
+       }
+
+   });
+});
